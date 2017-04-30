@@ -58,39 +58,6 @@ module.exports = [
     common,
     {
       entry: {
-        index: ["babel-polyfill", "./src/public/js/index.ts"]
-      },
-      module: tsModule({ browsers: ["last 2 versions"] }),
-      output: {
-        filename: "lib/public/js/[name].js"
-      },
-      plugins: common.plugins
-        .concat([
-          new CopyWebpackPlugin(
-            [{ from: "src/public/", to: "lib/public/" }],
-            {
-              ignore: [
-                "test/",
-                "*.ts",
-                "*.tsx"
-              ]
-            })
-        ])
-        .concat(isProduction
-          ? [
-            new webpack.optimize.UglifyJsPlugin({
-              output: { comments: uglifySaveLicense }
-            })
-          ]
-          : []
-        ),
-      target: "web"
-    }
-  ),
-  Object.assign({},
-    common,
-    {
-      entry: {
         index: ["babel-polyfill", "./src/index.ts"],
         "test/test": ["babel-polyfill", "./src/test/test.ts"]
       },
