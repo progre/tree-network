@@ -1,6 +1,6 @@
 {
   "name": "tree-network",
-  "description": "Tree network topology.",
+  "description": "Simple library to build tree network topology.",
   "version": "0.1.0-beta",
   "bugs": {
     "url": "https://github.com/progre/tree-network/issues"
@@ -38,9 +38,14 @@
     "LICENSE"
   ],
   "homepage": "https://github.com/progre/tree-network#readme",
+  "keywords": [
+    "network",
+    "topology",
+    "tree"
+  ],
   "license": "MIT",
   "main": "lib/index.js",
-  "private": true,
+  "private": false,
   "repository": {
     "type": "git",
     "url": "git+https://github.com/progre/tree-network.git"
