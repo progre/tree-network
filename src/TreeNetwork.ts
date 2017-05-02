@@ -17,7 +17,7 @@ export default class TreeNetwork<T> {
   /**
    * @return Array of { newParent, child }
    */
-  remove(item: T) {
+  remove(item: T): { newParent: T | null; branch: T }[] | null {
     if (this.root == null) {
       return null;
     }
@@ -26,7 +26,11 @@ export default class TreeNetwork<T> {
         this.root = null;
         return [];
       }
-      this.root = this.root.branches[0];
+      const newRoot = this.root.branches[0];
+      const dropBranch = this.root.branches[1];
+      this.root = newRoot;
+      return [{ newParent: <T | null>null, branch: this.root.value }]
+        .concat(this.root.addBranches([dropBranch]));
     }
     return this.root.remove(item);
   }
@@ -79,9 +83,6 @@ class Root<T> {
       .addBranch(branch);
   }
 
-  /**
-   * @return Array of { newParent, child }
-   */
   remove(item: T): { newParent: T; branch: T }[] | null {
     const parentOfDeletingItem = this.findParentBranch(item);
     if (parentOfDeletingItem == null) {
@@ -93,10 +94,13 @@ class Root<T> {
     }
     const cutOffBranches = parentOfDeletingItem.branches[idx].branches;
     parentOfDeletingItem.branches = parentOfDeletingItem.branches.filter((_, i) => i !== idx);
-    return cutOffBranches.slice()
-      .sort((a, b) => b.count() - a.count())
+    return this.addBranches(cutOffBranches);
+  }
+
+  addBranches(branches: ReadonlyArray<Root<T>>): { newParent: T; branch: T }[] {
+    return branches.slice().sort((a, b) => b.count() - a.count()) // Order of heavy
       .map(branch => ({
-        newParent: this.addBranch(branch),
+        newParent: this.addBranch(branch), // add order of heavy
         branch: branch.value,
       }));
   }
