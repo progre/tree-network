@@ -5,9 +5,7 @@
   "bugs": {
     "url": "https://github.com/progre/tree-network/issues"
   },
-  "dependencies": {
-    "babel-polyfill": "^6.23.0"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@types/empower": "^1.2.30",
     "@types/mocha": "^2.2.40",

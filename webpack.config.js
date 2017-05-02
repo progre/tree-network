@@ -58,8 +58,8 @@ module.exports = [
     common,
     {
       entry: {
-        index: ["babel-polyfill", "./src/index.ts"],
-        "test/test": ["babel-polyfill", "./src/test/test.ts"]
+        index: ["./src/index.ts"],
+        "test/test": ["./src/test/test.ts"]
       },
       externals: /^(?!\.)/,
       module: tsModule({ node: 6 }),
