@@ -10,14 +10,14 @@ const pyramidSample = [
 
 describe('TreeNetwork', () => {
   it('can have no item', () => {
-    const tree = new TreeNetwork(2);
+    const tree = new TreeNetwork();
     assert(tree.count() === 0);
     assert(tree.findParent({}) == null);
     assert(tree.remove({}) == null);
   });
 
   it('is added items as pyramid', () => {
-    const tree = new TreeNetwork(2);
+    const tree = new TreeNetwork();
     tree.add(pyramidSample[0][0]);
     assertTree(tree, 1, pyramidSample[0][0], null);
     tree.add(pyramidSample[1][0]);
@@ -139,7 +139,7 @@ function assemblePyramid(source: ReadonlyArray<ReadonlyArray<string>>) {
   source.forEach((stage, i) => {
     assert(stage.length === 2 ** i);
   });
-  const tree = new TreeNetwork<string>(2);
+  const tree = new TreeNetwork<string>();
   source.reduce((p, c) => p.concat(c), [])
     .forEach((item) => {
       tree.add(item);

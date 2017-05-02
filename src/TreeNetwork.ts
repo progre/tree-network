@@ -1,22 +1,29 @@
+export interface Options {
+  maxBranches?: number;
+}
+
+interface StrictOptions {
+  maxBranches: number;
+}
+
+function setDefaultValue(opts?: Options): StrictOptions {
+  return {
+    maxBranches: (opts == null ? null : opts.maxBranches) || 2,
+  };
+}
+
 export default class TreeNetwork<T> {
   private root: Root<T> | null;
 
-  constructor(
-    private maxBranches: number,
-  ) {
-  }
-
-  add(item: T) {
+  add(item: T, opts?: Options) {
+    const root = new Root(item, setDefaultValue(opts));
     if (this.root == null) {
-      this.root = new Root(item, this.maxBranches);
+      this.root = root;
       return null;
     }
-    return this.root.add(item);
+    return this.root.addBranch(root);
   }
 
-  /**
-   * @return Array of { newParent, child }
-   */
   remove(item: T): { newParent: T | null; branch: T }[] | null {
     if (this.root == null) {
       return null;
@@ -30,7 +37,7 @@ export default class TreeNetwork<T> {
       const dropBranch = this.root.branches[1];
       this.root = newRoot;
       return [{ newParent: <T | null>null, branch: this.root.value }]
-        .concat(this.root.addBranches([dropBranch]));
+        .concat([{ newParent: this.root.addBranch(dropBranch), branch: dropBranch.value }]);
     }
     return this.root.remove(item);
   }
@@ -55,26 +62,15 @@ class Root<T> {
 
   constructor(
     public value: T,
-    private maxBranches: number,
+    private options: StrictOptions,
   ) {
   }
 
   /**
    * @return Parent of added item
    */
-  add(item: T) {
-    if (this.value == null) {
-      this.value = item;
-      return null;
-    }
-    return this.addBranch(new Root<T>(item, this.maxBranches));
-  }
-
-  /**
-   * @return Parent of added item
-   */
-  private addBranch(branch: Root<T>): T {
-    if (this.branches.length < this.maxBranches) {
+  addBranch(branch: Root<T>): T {
+    if (this.branches.length < this.options.maxBranches) {
       this.branches = this.branches.concat([branch]);
       return this.value;
     }
@@ -83,7 +79,18 @@ class Root<T> {
       .addBranch(branch);
   }
 
+  addBranches(branches: ReadonlyArray<Root<T>>) {
+    return branches.slice().sort((a, b) => b.count() - a.count()) // Order of heavy
+      .map(branch => ({
+        newParent: this.addBranch(branch), // add order of heavy
+        branch: branch.value,
+      }));
+  }
+
   remove(item: T): { newParent: T; branch: T }[] | null {
+    if (item === this.value) {
+      throw new Error('Logic error');
+    }
     const parentOfDeletingItem = this.findParentBranch(item);
     if (parentOfDeletingItem == null) {
       return null;
@@ -95,14 +102,6 @@ class Root<T> {
     const cutOffBranches = parentOfDeletingItem.branches[idx].branches;
     parentOfDeletingItem.branches = parentOfDeletingItem.branches.filter((_, i) => i !== idx);
     return this.addBranches(cutOffBranches);
-  }
-
-  addBranches(branches: ReadonlyArray<Root<T>>): { newParent: T; branch: T }[] {
-    return branches.slice().sort((a, b) => b.count() - a.count()) // Order of heavy
-      .map(branch => ({
-        newParent: this.addBranch(branch), // add order of heavy
-        branch: branch.value,
-      }));
   }
 
   findParent(item: T) {
@@ -124,7 +123,7 @@ class Root<T> {
   }
 
   private depthOfShallowEmptyBranch(): number {
-    if (this.branches.length < this.maxBranches) {
+    if (this.branches.length < this.options.maxBranches) {
       return 0;
     }
     return this.branches
