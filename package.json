@@ -1,7 +1,7 @@
 {
   "name": "tree-network",
   "description": "Simple library to build tree network topology.",
-  "version": "0.2.0",
+  "version": "0.2.1-beta",
   "bugs": {
     "url": "https://github.com/progre/tree-network/issues"
   },
