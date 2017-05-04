@@ -73,9 +73,9 @@ describe('TreeNetwork', () => {
     assert(pyramid.count() === 6);
     assert(reconnectings != null);
     assert(reconnectings!.length === 2);
-    assert(reconnectings![0].branch === child11);
+    assert(reconnectings![0].child === child11);
     assert(reconnectings![0].newParent === root);
-    assert(reconnectings![1].branch === child12);
+    assert(reconnectings![1].child === child12);
     assert(reconnectings![1].newParent === child11);
   });
 
@@ -108,16 +108,16 @@ describe('TreeNetwork', () => {
     assert(pyramid.count() === 6);
     assert(reconnectings != null);
     assert(reconnectings!.length === 2);
-    assert(reconnectings![0].branch === child1);
+    assert(reconnectings![0].child === child1);
     assert(reconnectings![0].newParent == null);
-    assert(reconnectings![1].branch === child2);
+    assert(reconnectings![1].child === child2);
     assert(reconnectings![1].newParent === child11);
   });
 });
 
 function assertTree(tree: TreeNetwork<{}>, count: number, child: {}, parent: {} | null) {
   assert(tree.count() === count);
-  assert(tree.findParent(child) == parent);
+  assert(tree.findParent(child) === parent);
   assert(tree.remove({}) == null);
   assert(tree.count() === count);
 }

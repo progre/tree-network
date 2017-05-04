@@ -24,7 +24,7 @@ export default class TreeNetwork<T> {
     return this.root.addBranch(root);
   }
 
-  remove(item: T): { newParent: T | null; branch: T }[] | null {
+  remove(item: T): { newParent: T | null; child: T }[] | null {
     if (this.root == null) {
       return null;
     }
@@ -36,8 +36,8 @@ export default class TreeNetwork<T> {
       const newRoot = this.root.branches[0];
       const dropBranch = this.root.branches[1];
       this.root = newRoot;
-      return [{ newParent: <T | null>null, branch: this.root.value }]
-        .concat([{ newParent: this.root.addBranch(dropBranch), branch: dropBranch.value }]);
+      return [{ newParent: <T | null>null, child: this.root.value }]
+        .concat([{ newParent: this.root.addBranch(dropBranch), child: dropBranch.value }]);
     }
     return this.root.remove(item);
   }
@@ -83,11 +83,11 @@ class Root<T> {
     return branches.slice().sort((a, b) => b.count() - a.count()) // Order of heavy
       .map(branch => ({
         newParent: this.addBranch(branch), // add order of heavy
-        branch: branch.value,
+        child: branch.value,
       }));
   }
 
-  remove(item: T): { newParent: T; branch: T }[] | null {
+  remove(item: T): { newParent: T; child: T }[] | null {
     if (item === this.value) {
       throw new Error('Logic error');
     }
