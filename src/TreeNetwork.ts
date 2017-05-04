@@ -49,6 +49,13 @@ export default class TreeNetwork<T> {
     return this.root.findParent(item);
   }
 
+  findChildren(item: T) {
+    if (this.root === null) {
+      return null;
+    }
+    return this.root.findChildren(item);
+  }
+
   count() {
     if (this.root == null) {
       return 0;
@@ -107,6 +114,22 @@ class Root<T> {
   findParent(item: T) {
     const parent = this.findParentBranch(item)
     return parent == null ? null : parent.value;
+  }
+
+  findChildren(item: T): T[] | null {
+    if (item === this.value) {
+      return this.branches.map(x => x.value);
+    }
+    if (this.branches.length <= 0) {
+      return null;
+    }
+    for (const branch of this.branches) {
+      const children = branch.findChildren(item);
+      if (children != null) {
+        return children;
+      }
+    }
+    return null;
   }
 
   private findParentBranch(item: T): Root<T> | null {

@@ -24,14 +24,17 @@ describe('TreeNetwork', () => {
     assertTree(tree, 2, pyramidSample[1][0], pyramidSample[0][0]);
     tree.add(pyramidSample[1][1]);
     assertTree(tree, 3, pyramidSample[1][1], pyramidSample[0][0]);
+    assert(tree.findChildren(pyramidSample[0][0])!.length === 2);
     tree.add(pyramidSample[2][0]);
     assertTree(tree, 4, pyramidSample[2][0], pyramidSample[1][0]);
     tree.add(pyramidSample[2][1]);
     assertTree(tree, 5, pyramidSample[2][1], pyramidSample[1][0]);
+    assert(tree.findChildren(pyramidSample[1][0])!.length === 2);
     tree.add(pyramidSample[2][2]);
     assertTree(tree, 6, pyramidSample[2][2], pyramidSample[1][1]);
     tree.add(pyramidSample[2][3]);
     assertTree(tree, 7, pyramidSample[2][3], pyramidSample[1][1]);
+    assert(tree.findChildren(pyramidSample[1][1])!.length === 2);
   });
 
   it('can remove leaf', () => {
@@ -118,6 +121,9 @@ describe('TreeNetwork', () => {
 function assertTree(tree: TreeNetwork<{}>, count: number, child: {}, parent: {} | null) {
   assert(tree.count() === count);
   assert(tree.findParent(child) === parent);
+  if (parent != null) {
+    assert(tree.findChildren(parent)!.includes(child));
+  }
   assert(tree.remove({}) == null);
   assert(tree.count() === count);
 }
